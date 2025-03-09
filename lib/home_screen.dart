@@ -4,9 +4,7 @@ import 'screens/learning_activities_screen.dart';
 import 'screens/shape_recognition_screen.dart';
 import 'screens/color_recognition_screen.dart';
 import 'screens/object_recognition_screen.dart';
-import 'screens/text_reading_screen.dart';
 import 'screens/spatial_navigation_screen.dart';
-import 'screens/voice_assistant_screen.dart';
 import 'screens/join_items_screen.dart';
 import 'screens/customization_screen.dart';
 
@@ -126,32 +124,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildActivityButton(
                     'تمييز الألوان',
                     Icons.color_lens,
-                    Colors.pink,
+                    Colors.blue,
                     ColorRecognitionScreen(),
                   ),
                   _buildActivityButton(
                     'التعرف على الأشياء',
                     Icons.category,
-                    Colors.purple,
+                    Colors.green,
                     ObjectRecognitionScreen(),
-                  ),
-                  _buildActivityButton(
-                    'قراءة النصوص',
-                    Icons.text_fields,
-                    Colors.blue,
-                    TextReadingScreen(),
                   ),
                   _buildActivityButton(
                     'التوجيه المكاني',
                     Icons.navigation,
                     Colors.green,
                     SpatialNavigationScreen(),
-                  ),
-                  _buildActivityButton(
-                    'المساعد الصوتي',
-                    Icons.mic,
-                    Colors.red,
-                    VoiceAssistantScreen(),
                   ),
                   _buildActivityButton(
                     'التوصيل',
