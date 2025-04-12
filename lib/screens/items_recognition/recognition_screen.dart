@@ -9,6 +9,7 @@ import 'package:be_vision_cvi/screens/items_recognition/vegetable_recognition_sc
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:vibration/vibration.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class RecognitionScreen extends StatefulWidget {
   @override
@@ -138,7 +139,7 @@ class _RecognitionScreenState extends State<RecognitionScreen>
                     ),
                     _buildActivityButton(
                       'الحيوانات المفترسة',
-                      Icons.nature,
+                      FontAwesomeIcons.wolfPackBattalion,
                       Colors.blue[900]!,
                       PredatorRecognitionScreen(),
                     ),
@@ -150,7 +151,7 @@ class _RecognitionScreenState extends State<RecognitionScreen>
                     ),
                     _buildActivityButton(
                       'الخضروات',
-                      Icons.account_box,
+                      FontAwesomeIcons.carrot,
                       Colors.blue[900]!,
                       VegetableRecognitionScreen(),
                     ),
@@ -164,7 +165,7 @@ class _RecognitionScreenState extends State<RecognitionScreen>
                       'وسائل النقل',
                       Icons.car_crash,
                       Colors.blue[900]!,
-                       TransportationRecognitionScreen(),
+                      TransportationRecognitionScreen(),
                     ),
                   ],
                 ),

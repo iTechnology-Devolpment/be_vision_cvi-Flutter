@@ -8,6 +8,7 @@ import 'package:be_vision_cvi/screens/join_items/join_transportation_screen.dart
 import 'package:be_vision_cvi/screens/join_items/join_vegetable_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:vibration/vibration.dart';
 
 class JoinScreen extends StatefulWidget {
@@ -137,7 +138,7 @@ class _JoinScreenState extends State<JoinScreen> with TickerProviderStateMixin {
                     ),
                     _buildActivityButton(
                       'الحيوانات المفترسة',
-                      Icons.nature,
+                      FontAwesomeIcons.wolfPackBattalion,
                       Colors.blue[900]!,
                       JoinPredatorScreen(),
                     ),
@@ -149,7 +150,7 @@ class _JoinScreenState extends State<JoinScreen> with TickerProviderStateMixin {
                     ),
                     _buildActivityButton(
                       'الخضروات',
-                      Icons.account_box,
+                      FontAwesomeIcons.carrot,
                       Colors.blue[900]!,
                       JoinVegetableScreen(),
                     ),
