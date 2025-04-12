@@ -1,11 +1,16 @@
+import 'package:be_vision_cvi/screens/about_project_screen.dart';
+import 'package:be_vision_cvi/screens/items_recognition/pet_recognition_screen.dart';
+import 'package:be_vision_cvi/screens/items_recognition/recognition_screen.dart';
+import 'package:be_vision_cvi/screens/join_items/join_pets_screen.dart';
+import 'package:be_vision_cvi/screens/join_items/join_screen.dart';
+import 'package:be_vision_cvi/screens/join_items/join_shapes_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'screens/learning_activities_screen.dart';
-import 'screens/shape_recognition_screen.dart';
-import 'screens/color_recognition_screen.dart';
+import 'screens/items_recognition/shape_recognition_screen.dart';
+import 'screens/items_recognition/color_recognition_screen.dart';
 import 'screens/object_recognition_screen.dart';
 import 'screens/spatial_navigation_screen.dart';
-import 'screens/join_items_screen.dart';
 import 'screens/customization_screen.dart';
 
 void main() {
@@ -19,7 +24,7 @@ class MyApp extends StatelessWidget {
       title: 'VISION CVI',
       theme: ThemeData(
         fontFamily: 'Cairo',
-        primarySwatch: Colors.teal,
+        primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: HomeScreen(),
@@ -67,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             height: 200,
             decoration: BoxDecoration(
-              color: Colors.teal[700],
+              color: Colors.blue[900],
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(40),
                 bottomRight: Radius.circular(40),
@@ -112,50 +117,66 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildActivityButton(
                     'أنشطة التعلم',
                     Icons.school,
-                    Colors.teal,
-                    CVILearningScreen(),
+                    Colors.blue[900]!,
+                    RecognitionScreen(),
                   ),
                   _buildActivityButton(
-                    'تمييز الأشكال',
-                    Icons.shape_line,
-                    Colors.orange,
-                    ShapeRecognitionScreen(),
-                  ),
-                  _buildActivityButton(
-                    'تمييز الألوان',
-                    Icons.color_lens,
-                    Colors.blue,
-                    ColorRecognitionScreen(),
+                    'التوصيل',
+                    Icons.line_axis,
+                    Colors.blue[900]!,
+                    JoinScreen(),
                   ),
                   _buildActivityButton(
                     'التعرف على الأشياء',
                     Icons.category,
-                    Colors.green,
+                    Colors.blue[900]!,
                     ObjectRecognitionScreen(),
                   ),
                   _buildActivityButton(
                     'التوجيه المكاني',
                     Icons.navigation,
-                    Colors.green,
+                    Colors.blue[900]!,
                     SpatialNavigationScreen(),
-                  ),
-                  _buildActivityButton(
-                    'التوصيل',
-                    Icons.line_axis,
-                    Colors.amber,
-                    JoinItemsScreen(),
-                  ),
-                  _buildActivityButton(
-                    'التخصيص',
-                    Icons.settings,
-                    Colors.indigo,
-                    CustomizationScreen(),
                   ),
                 ],
               ),
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: SizedBox(
+          height: 60,
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue[900],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              elevation: 5,
+            ),
+            onPressed: () {
+              speak('عن المشروع');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AboutProjectScreen(),
+                ),
+              );
+            },
+            icon: Icon(Icons.info, color: Colors.white),
+            label: Text(
+              'عن المشروع',
+              style: TextStyle(
+                fontSize: 20,
+                fontFamily: 'Cairo',
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

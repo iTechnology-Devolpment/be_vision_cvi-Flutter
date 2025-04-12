@@ -69,6 +69,12 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
+    - assets/animals/pets/
+    - assets/animals/predators/
+    - assets/fruits/
+    - assets/kitchen_tools/
+    - assets/transportation/
+    - assets/vegetables/
     - assets/ssd_mobilenet.tflite
     - assets/ssd_mobilenet.txt
 

@@ -66,9 +66,9 @@ class _SpatialNavigationScreenState extends State<SpatialNavigationScreen> {
       appBar: AppBar(
         title: Text(
           isArabic ? 'التوجيه المكاني' : 'Spatial Navigation',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold,color: Colors.white),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.blue[900],
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -134,7 +134,7 @@ class _SpatialNavigationScreenState extends State<SpatialNavigationScreen> {
         onPressed: () => navigateTo(location),
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 16),
-          backgroundColor: Colors.deepPurpleAccent,
+          backgroundColor: Colors.blue[900],
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),

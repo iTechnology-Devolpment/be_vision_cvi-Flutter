@@ -253,18 +253,19 @@ class _ObjectRecognitionScreenState extends State<ObjectRecognitionScreen>
         style: TextStyle(
           fontSize: 26,
           fontWeight: FontWeight.bold,
+          color: Colors.white,
           shadows: [Shadow(color: Colors.black, blurRadius: 3)],
         ),
       ),
-      backgroundColor: Colors.yellow[900],
+      backgroundColor: Colors.blue[900],
       centerTitle: true,
       leading: IconButton(
-        icon: Icon(Icons.arrow_back, size: 30),
+        icon: Icon(Icons.arrow_back, size: 30, color: Colors.white),
         onPressed: () => Navigator.pop(context),
       ),
       actions: [
         IconButton(
-          icon: Icon(Icons.language, size: 30),
+          icon: Icon(Icons.language, size: 30, color: Colors.white),
           onPressed: _toggleLanguage,
           tooltip: _isArabic ? "Switch to English" : "تبديل إلى العربية",
         ),
@@ -290,7 +291,7 @@ class _ObjectRecognitionScreenState extends State<ObjectRecognitionScreen>
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.yellow[900]!,
+                        color: Colors.blue[900]!,
                         spreadRadius: 3,
                         blurRadius: 10,
                       )
@@ -316,7 +317,7 @@ class _ObjectRecognitionScreenState extends State<ObjectRecognitionScreen>
             ),
           if (_isProcessing)
             CircularProgressIndicator(
-              color: Colors.yellow[900],
+              color: Colors.blue[900],
               strokeWidth: 5,
             ),
         ],
@@ -330,7 +331,7 @@ class _ObjectRecognitionScreenState extends State<ObjectRecognitionScreen>
         child: ElevatedButton.icon(
           icon: Icon(
             _isProcessing ? Icons.hourglass_top : Icons.camera_alt,
-            color: Colors.black,
+            color: Colors.white,
             size: 30,
           ),
           label: Text(
@@ -339,13 +340,13 @@ class _ObjectRecognitionScreenState extends State<ObjectRecognitionScreen>
                 : (_isArabic ? 'التقاط صورة' : 'Capture'),
             style: TextStyle(
               fontSize: 24,
-              color: Colors.black,
+              color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
           onPressed: _isProcessing ? null : _captureImage,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.amber[800],
+            backgroundColor: Colors.blue[800],
             padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(40),
