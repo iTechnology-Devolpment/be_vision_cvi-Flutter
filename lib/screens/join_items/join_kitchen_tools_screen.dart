@@ -14,43 +14,64 @@ class _JoinKitchenToolsScreenState extends State<JoinKitchenToolsScreen>
   bool isArabic = true;
   late AnimationController _controller;
   late Animation<double> _animation;
+  int _currentBatch = 0;
 
-  final List<Map<String, dynamic>> _items = [
+  final List<Map<String, dynamic>> _allItems = [
     {
       'id': 1,
-      'image': 'assets/kitchen_tools/knife.jpg',
       'matched': false,
+      'image': 'assets/kitchen_tools/spoon.jpg',
+      'nameEn': 'Spoon',
+      'nameAr': 'ملعقة'
+    },
+    {
+      'id': 2,
+      'matched': false,
+      'image': 'assets/kitchen_tools/fork.jpg',
+      'nameEn': 'Fork',
+      'nameAr': 'شوكة'
+    },
+    {
+      'id': 3,
+      'matched': false,
+      'image': 'assets/kitchen_tools/knife.jpg',
       'nameEn': 'Knife',
       'nameAr': 'سكينة'
     },
     {
-      'id': 2,
-      'image': 'assets/kitchen_tools/rolling_pin.jpg',
+      'id': 4,
       'matched': false,
-      'nameEn': 'Rolling Pin',
-      'nameAr': 'شوبك'
+      'image': 'assets/kitchen_tools/dish.jpg',
+      'nameEn': 'Dish',
+      'nameAr': 'طبق'
     },
     {
-      'id': 3,
-      'image': 'assets/kitchen_tools/whisk.jpg',
+      'id': 5,
       'matched': false,
-      'nameEn': 'Whisk',
-      'nameAr': 'خفاقة'
+      'image': 'assets/kitchen_tools/cup.jpg',
+      'nameEn': 'Cup',
+      'nameAr': 'فنجان'
+    },
+    {
+      'id': 6,
+      'matched': false,
+      'image': 'assets/kitchen_tools/thermal_mug.jpg',
+      'nameEn': 'Thermal Mug',
+      'nameAr': 'مج حراري'
+    },
+    {
+      'image': 'assets/kitchen_tools/cooking_pot.jpg',
+      'nameEn': 'Cooking Pot',
+      'nameAr': 'اناء طهي'
     },
   ];
 
-  final List<Map<String, dynamic>> _targets = [
-    {'id': 1, 'image': 'assets/kitchen_tools/knife.jpg'},
-    {'id': 2, 'image': 'assets/kitchen_tools/rolling_pin.jpg'},
-    {'id': 3, 'image': 'assets/kitchen_tools/whisk.jpg'},
-  ];
+  late List<List<Map<String, dynamic>>> _batches;
+  late List<List<Map<String, dynamic>>> _targetBatches;
 
   @override
   void initState() {
     super.initState();
-    // Add these 2 lines to shuffle lists on initialization
-    _items.shuffle();
-    _targets.shuffle();
     flutterTts.setLanguage("ar");
     _controller = AnimationController(
       vsync: this,
@@ -59,22 +80,44 @@ class _JoinKitchenToolsScreenState extends State<JoinKitchenToolsScreen>
     _animation = Tween(begin: 1.0, end: 1.2).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
+    _resetGame();
+  }
+
+  List<List<Map<String, dynamic>>> _generateBatches(
+      List<Map<String, dynamic>> list, int batchSize) {
+    List<List<Map<String, dynamic>>> batches = [];
+    for (int i = 0; i < list.length; i += batchSize) {
+      batches.add(list.sublist(
+          i, i + batchSize > list.length ? list.length : i + batchSize));
+    }
+    return batches;
   }
 
   void _resetGame() {
     setState(() {
       _correctMatches = 0;
-      _items.forEach((item) => item['matched'] = false);
-      _items.shuffle();
-      _targets.shuffle();
+      _currentBatch = 0;
+      _allItems.forEach((item) => item['matched'] = false);
+      _allItems.shuffle();
+      List<Map<String, dynamic>> targets = List.from(_allItems);
+      _batches = _generateBatches(_allItems, 3);
+      _targetBatches = List.generate(
+        _batches.length,
+        (index) => List.from(_batches[index].map((item) => {
+              'id': item['id'],
+              'image': item['image'],
+              'nameEn': item['nameEn'],
+              'nameAr': item['nameAr'],
+              'matched': false
+            }))
+          ..shuffle(),
+      );
     });
   }
 
-  void speak(String text) async {
-    await flutterTts.speak(text);
-  }
+  Future<void> speak(String text) async => await flutterTts.speak(text);
 
-  void vibrate({int duration = 500}) async {
+  Future<void> vibrate({int duration = 500}) async {
     if (await Vibration.hasVibrator() ?? false) {
       Vibration.vibrate(duration: duration);
     }
@@ -89,20 +132,29 @@ class _JoinKitchenToolsScreenState extends State<JoinKitchenToolsScreen>
     vibrate();
   }
 
-  void _handleMatch(int itemId, int targetId) {
+  void _handleMatch(int itemId, int targetId) async {
     if (itemId == targetId) {
       setState(() {
         _correctMatches++;
-        _items.firstWhere((item) => item['id'] == itemId)['matched'] = true;
+        _batches[_currentBatch]
+            .firstWhere((item) => item['id'] == itemId)['matched'] = true;
       });
-      var item = _items.firstWhere((item) => item['id'] == itemId);
-      final itemName = isArabic ? item['nameAr']! : item['nameEn']!;
-      speak(isArabic ? 'أحسنت $itemName}' : 'Correct $itemName');
+      var item =
+          _batches[_currentBatch].firstWhere((item) => item['id'] == itemId);
+      final itemName = isArabic ? item['nameAr'] : item['nameEn'];
+      await speak(itemName);
       vibrate();
       _controller.forward().then((_) => _controller.reverse());
+
+      bool batchDone = _batches[_currentBatch].every((item) => item['matched']);
+      if (batchDone && _currentBatch + 1 < _batches.length) {
+        Future.delayed(Duration(seconds: 1), () {
+          setState(() => _currentBatch++);
+        });
+      }
     } else {
-      speak(isArabic ? 'خطأ' : 'Wrong');
-      vibrate(duration: 250);
+      await speak(isArabic ? 'خطأ' : 'Wrong');
+      await vibrate(duration: 250);
     }
   }
 
@@ -144,11 +196,9 @@ class _JoinKitchenToolsScreenState extends State<JoinKitchenToolsScreen>
                 children: [
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: _items.map((item) {
+                    children: _batches[_currentBatch].map((item) {
                       if (item['matched']) {
-                        // Hide matched items
-                        return SizedBox(
-                            width: 100, height: 100); // Maintain layout space
+                        return SizedBox(width: 100, height: 100);
                       }
                       return Draggable<int>(
                         data: item['id'],
@@ -164,19 +214,28 @@ class _JoinKitchenToolsScreenState extends State<JoinKitchenToolsScreen>
                             speak(isArabic ? item['nameAr'] : item['nameEn']);
                             vibrate();
                           },
-                          child: Image.asset(item['image'], width: 100),
+                          child: Container(
+                              width: 100,
+                              height: 100,
+                              margin: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.white, width: 2),
+                              ),
+                              child: Image.asset(item['image'],
+                                  width: 100, height: 100, fit: BoxFit.cover)),
                         ),
                       );
                     }).toList(),
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: _targets.map((target) {
+                    children: _targetBatches[_currentBatch].map((target) {
+                      bool isMatched = _batches[_currentBatch].any((item) =>
+                          item['id'] == target['id'] && item['matched']);
                       return DragTarget<int>(
                         onAccept: (data) => _handleMatch(data, target['id']),
                         builder: (context, candidateData, rejectedData) {
-                          bool isMatched = _items.any((item) =>
-                              item['id'] == target['id'] && item['matched']);
                           return Container(
                             width: 100,
                             height: 100,
@@ -187,10 +246,10 @@ class _JoinKitchenToolsScreenState extends State<JoinKitchenToolsScreen>
                             child: isMatched
                                 ? GestureDetector(
                                     onTap: () {
-                                      final matchedItem = _items.firstWhere(
-                                          (item) =>
-                                              item['id'] == target['id'] &&
-                                              item['matched']);
+                                      final matchedItem =
+                                          _batches[_currentBatch].firstWhere(
+                                              (item) =>
+                                                  item['id'] == target['id']);
                                       speak(isArabic
                                           ? matchedItem['nameAr']
                                           : matchedItem['nameEn']);
@@ -201,7 +260,7 @@ class _JoinKitchenToolsScreenState extends State<JoinKitchenToolsScreen>
                                   )
                                 : Image.asset(target['image'],
                                     width: 100,
-                                    opacity: const AlwaysStoppedAnimation(0.3)),
+                                    opacity: const AlwaysStoppedAnimation(0.5)),
                           );
                         },
                       );
@@ -237,8 +296,8 @@ class _JoinKitchenToolsScreenState extends State<JoinKitchenToolsScreen>
                 children: [
                   Text(
                     isArabic
-                        ? 'التقدم: $_correctMatches/${_items.length}'
-                        : 'Progress: $_correctMatches/${_items.length}',
+                        ? 'التقدم: $_correctMatches/${_allItems.length}'
+                        : 'Progress: $_correctMatches/${_allItems.length}',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 32,

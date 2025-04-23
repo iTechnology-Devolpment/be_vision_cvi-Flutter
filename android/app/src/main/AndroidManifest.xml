@@ -4,7 +4,7 @@
         android:name="android.hardware.camera"
         android:required="false" />
     <application
-        android:label="be_vision_cvi"
+        android:label="Be Vision CVI"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

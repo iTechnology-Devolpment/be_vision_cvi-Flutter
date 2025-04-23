@@ -4,11 +4,12 @@ import 'package:vibration/vibration.dart';
 
 class KitchenToolsRecognitionScreen extends StatefulWidget {
   @override
-  _KitchenToolsRecognitionScreenState createState() => _KitchenToolsRecognitionScreenState();
+  _KitchenToolsRecognitionScreenState createState() =>
+      _KitchenToolsRecognitionScreenState();
 }
 
-class _KitchenToolsRecognitionScreenState extends State<KitchenToolsRecognitionScreen>
-    with TickerProviderStateMixin {
+class _KitchenToolsRecognitionScreenState
+    extends State<KitchenToolsRecognitionScreen> with TickerProviderStateMixin {
   FlutterTts flutterTts = FlutterTts();
   String selectedLanguage = 'ar';
   late AnimationController _controller;
@@ -17,19 +18,39 @@ class _KitchenToolsRecognitionScreenState extends State<KitchenToolsRecognitionS
 
   final List<Map<String, dynamic>> items = [
     {
+      'image': 'assets/kitchen_tools/spoon.jpg',
+      'nameEn': 'Spoon',
+      'nameAr': 'ملعقة'
+    },
+    {
+      'image': 'assets/kitchen_tools/fork.jpg',
+      'nameEn': 'Fork',
+      'nameAr': 'شوكة'
+    },
+    {
       'image': 'assets/kitchen_tools/knife.jpg',
       'nameEn': 'Knife',
       'nameAr': 'سكينة'
     },
     {
-      'image': 'assets/kitchen_tools/rolling_pin.jpg',
-      'nameEn': 'Rolling Pin',
-      'nameAr': 'شوبك'
+      'image': 'assets/kitchen_tools/dish.jpg',
+      'nameEn': 'Dish',
+      'nameAr': 'طبق'
     },
     {
-      'image': 'assets/kitchen_tools/whisk.jpg',
-      'nameEn': 'Whisk',
-      'nameAr': 'خفاقة'
+      'image': 'assets/kitchen_tools/cup.jpg',
+      'nameEn': 'Cup',
+      'nameAr': 'فنجان'
+    },
+    {
+      'image': 'assets/kitchen_tools/thermal_mug.jpg',
+      'nameEn': 'Thermal Mug',
+      'nameAr': 'مج حراري'
+    },
+    {
+      'image': 'assets/kitchen_tools/cooking_pot.jpg',
+      'nameEn': 'Cooking Pot',
+      'nameAr': 'اناء طهي'
     },
   ];
 
@@ -82,7 +103,8 @@ class _KitchenToolsRecognitionScreenState extends State<KitchenToolsRecognitionS
   void nextItem() {
     _controller.forward().then((_) => _controller.reverse());
     setState(() => currentItemIndex = (currentItemIndex + 1) % items.length);
-    speak('${translate("currentItem")} ${items[currentItemIndex][selectedLanguage == 'ar' ? 'nameAr' : 'nameEn']}');
+    speak(
+        '${translate("currentItem")} ${items[currentItemIndex][selectedLanguage == 'ar' ? 'nameAr' : 'nameEn']}');
     vibrate();
   }
 
@@ -112,7 +134,9 @@ class _KitchenToolsRecognitionScreenState extends State<KitchenToolsRecognitionS
         IconButton(
           icon: Icon(Icons.language, size: 35, color: Colors.white),
           onPressed: changeLanguage,
-          tooltip: selectedLanguage == 'ar' ? 'Switch to English' : 'تبديل إلى العربية',
+          tooltip: selectedLanguage == 'ar'
+              ? 'Switch to English'
+              : 'تبديل إلى العربية',
         ),
       ],
     );
@@ -127,7 +151,8 @@ class _KitchenToolsRecognitionScreenState extends State<KitchenToolsRecognitionS
       ),
       child: GestureDetector(
         onTap: () {
-          speak('${translate("currentItem")} ${items[currentItemIndex][selectedLanguage == 'ar' ? 'nameAr' : 'nameEn']}');
+          speak(
+              '${translate("currentItem")} ${items[currentItemIndex][selectedLanguage == 'ar' ? 'nameAr' : 'nameEn']}');
           vibrate();
         },
         child: Container(
@@ -169,7 +194,8 @@ class _KitchenToolsRecognitionScreenState extends State<KitchenToolsRecognitionS
             getItemWidget(),
             SizedBox(height: 30),
             Text(
-              items[currentItemIndex][selectedLanguage == 'ar' ? 'nameAr' : 'nameEn'],
+              items[currentItemIndex]
+                  [selectedLanguage == 'ar' ? 'nameAr' : 'nameEn'],
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 32,

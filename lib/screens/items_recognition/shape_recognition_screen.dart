@@ -11,7 +11,7 @@ class ShapeRecognitionScreen extends StatefulWidget {
 class _ShapeRecognitionScreenState extends State<ShapeRecognitionScreen>
     with TickerProviderStateMixin {
   FlutterTts flutterTts = FlutterTts();
-  List<String> shapes = ['circle', 'square', 'triangle', 'star'];
+  List<String> shapes = ['star', 'circle', 'triangle', 'square', 'rectangle'];
   int currentShapeIndex = 0;
   String selectedLanguage = 'ar';
   late AnimationController _controller;
@@ -45,6 +45,7 @@ class _ShapeRecognitionScreenState extends State<ShapeRecognitionScreen>
         'square': 'مربع',
         'triangle': 'مثلث',
         'star': 'نجمة',
+        'rectangle': 'مستطيل',
         'next': 'التالي',
         'languageChanged': 'تم تغيير اللغة',
         'appTitle': 'تمييز الأشكال',
@@ -55,6 +56,7 @@ class _ShapeRecognitionScreenState extends State<ShapeRecognitionScreen>
         'square': 'Square',
         'triangle': 'Triangle',
         'star': 'Star',
+        'rectangle': 'Rectangle',
         'next': 'Next',
         'languageChanged': 'Language changed',
         'appTitle': 'Shape Recognition',
@@ -92,9 +94,10 @@ class _ShapeRecognitionScreenState extends State<ShapeRecognitionScreen>
             fontSize: 28,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
+            color: Colors.white,
             shadows: [Shadow(color: Colors.black, blurRadius: 5)],
           )),
-      backgroundColor: Colors.yellow[900],
+      backgroundColor: Colors.blue[900],
       toolbarHeight: 80,
       leading: IconButton(
         icon: Icon(Icons.arrow_back, size: 35, color: Colors.white),
@@ -121,19 +124,7 @@ class _ShapeRecognitionScreenState extends State<ShapeRecognitionScreen>
       ),
       child: Container(
         width: 250,
-        height: 250,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: Colors.white, width: 8),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.white.withOpacity(0.3),
-              spreadRadius: 5,
-              blurRadius: 15,
-              offset: Offset(0, 3),
-            )
-          ],
-        ),
+        height: currentShape == 'rectangle' ? 150 : 250,
         child: _getShapePainter(currentShape),
       ),
     );
@@ -151,6 +142,11 @@ class _ShapeRecognitionScreenState extends State<ShapeRecognitionScreen>
       case 'square':
         return Container(
           color: Colors.blue[900],
+          margin: EdgeInsets.all(20),
+        );
+      case 'rectangle':
+        return Container(
+          color: Colors.white,
           margin: EdgeInsets.all(20),
         );
       case 'triangle':
@@ -185,7 +181,7 @@ class _ShapeRecognitionScreenState extends State<ShapeRecognitionScreen>
               },
               child: getShapeWidget(),
             ),
-            SizedBox(height: 30),
+            SizedBox(height: shapes[currentShapeIndex] == 'rectangle' ? 130 : 30),
             Text(
               translate(shapes[currentShapeIndex]),
               style: TextStyle(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:vibration/vibration.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class JoinColorsScreen extends StatefulWidget {
   @override
@@ -12,50 +13,103 @@ class _JoinColorsScreenState extends State<JoinColorsScreen>
   int _correctMatches = 0;
   final FlutterTts flutterTts = FlutterTts();
   bool isArabic = true;
+  int _currentBatchIndex = 0;
+  final int _batchSize = 3;
   late AnimationController _controller;
   late Animation<double> _animation;
+  late final AudioPlayer _audioPlayer;
 
   final Map<Color, String> colorNameMapArabic = {
+    Colors.black: 'أسود',
+    Colors.white: 'أبيض',
     Colors.red[900]!: 'أحمر',
-    Colors.blue[900]!: 'أزرق',
     Colors.green[900]!: 'أخضر',
+    Colors.yellow[700]!: 'أصفر',
+    Colors.blue[900]!: 'أزرق',
+    Colors.orange[800]!: 'برتقالي',
+    Colors.purple[800]!: 'بنفسجي',
   };
 
   final Map<Color, String> colorNameMapEnglish = {
+    Colors.black: 'Black',
+    Colors.white: 'White',
     Colors.red[900]!: 'Red',
-    Colors.blue[900]!: 'Blue',
     Colors.green[900]!: 'Green',
+    Colors.yellow[700]!: 'Yellow',
+    Colors.blue[900]!: 'Blue',
+    Colors.orange[800]!: 'Orange',
+    Colors.purple[800]!: 'Purple',
   };
+
   final List<Map<String, dynamic>> _items = [
+    {'id': 1, 'color': Colors.black, 'shape': Icons.square, 'matched': false},
+    {'id': 2, 'color': Colors.white, 'shape': Icons.square, 'matched': false},
     {
-      'id': 1,
+      'id': 3,
       'color': Colors.red[900]!,
       'shape': Icons.square,
       'matched': false
     },
     {
-      'id': 2,
+      'id': 4,
+      'color': Colors.green[900]!,
+      'shape': Icons.square,
+      'matched': false
+    },
+    {
+      'id': 5,
+      'color': Colors.yellow[700]!,
+      'shape': Icons.square,
+      'matched': false
+    },
+    {
+      'id': 6,
       'color': Colors.blue[900]!,
       'shape': Icons.square,
       'matched': false
     },
     {
-      'id': 3,
-      'color': Colors.green[900]!,
+      'id': 7,
+      'color': Colors.orange[800]!,
+      'shape': Icons.square,
+      'matched': false
+    },
+    {
+      'id': 8,
+      'color': Colors.purple[800]!,
       'shape': Icons.square,
       'matched': false
     },
   ];
 
-  final List<Map<String, dynamic>> _targets = [
-    {'id': 1, 'color': Colors.red[900]!, 'shape': Icons.square},
-    {'id': 2, 'color': Colors.blue[900]!, 'shape': Icons.square},
-    {'id': 3, 'color': Colors.green[900]!, 'shape': Icons.square},
-  ];
+  late final List<Map<String, dynamic>> _targets = _items
+      .map((item) => {
+            'id': item['id'],
+            'color': item['color'],
+            'shape': item['shape'],
+          })
+      .toList();
+
+  List<Map<String, dynamic>> get _currentItems {
+    final start = _currentBatchIndex * _batchSize;
+    final end = (_currentBatchIndex + 1) * _batchSize;
+    return _items
+        .where((item) => item['id'] > start && item['id'] <= end)
+        .toList();
+  }
+
+  List<Map<String, dynamic>> get _currentTargets {
+    final start = _currentBatchIndex * _batchSize;
+    final end = (_currentBatchIndex + 1) * _batchSize;
+    return _targets
+        .where((target) => target['id'] > start && target['id'] <= end)
+        .toList();
+  }
 
   @override
   void initState() {
     super.initState();
+    _audioPlayer = AudioPlayer();
     _items.shuffle();
     _targets.shuffle();
     flutterTts.setLanguage("ar");
@@ -68,20 +122,29 @@ class _JoinColorsScreenState extends State<JoinColorsScreen>
     );
   }
 
+  Future<void> playClapSound() async {
+    await _audioPlayer.play(AssetSource('sounds/clap.mp3'));
+  }
+
+  Future<void> playWrongSound() async {
+    await _audioPlayer.play(AssetSource('sounds/wrong.mp3'));
+  }
+
   void _resetGame() {
     setState(() {
       _correctMatches = 0;
+      _currentBatchIndex = 0;
       _items.forEach((item) => item['matched'] = false);
       _items.shuffle();
       _targets.shuffle();
     });
   }
 
-  void speak(String text) async {
+  Future<void> speak(String text) async {
     await flutterTts.speak(text);
   }
 
-  void vibrate({int duration = 500}) async {
+  Future<void> vibrate({int duration = 500}) async {
     if (await Vibration.hasVibrator() ?? false) {
       Vibration.vibrate(duration: duration);
     }
@@ -96,22 +159,41 @@ class _JoinColorsScreenState extends State<JoinColorsScreen>
     vibrate();
   }
 
-  void _handleMatch(int itemId, int targetId) {
+  void _handleMatch(int itemId, int targetId) async {
     if (itemId == targetId) {
       setState(() {
         _correctMatches++;
         _items.firstWhere((item) => item['id'] == itemId)['matched'] = true;
+
+        final matchedInBatch =
+            _currentItems.where((item) => item['matched']).length;
+        if (matchedInBatch == _currentItems.length) {
+          Future.delayed(Duration(milliseconds: 500), () {
+            if ((_currentBatchIndex + 1) * _batchSize < _items.length) {
+              setState(() {
+                _currentBatchIndex++;
+              });
+            } else {
+              speak(isArabic
+                  ? "أحسنت، أنهيت اللعبة!"
+                  : "Well done! You finished the game!");
+            }
+          });
+        }
       });
+
       final matchedItem = _items.firstWhere((item) => item['id'] == itemId);
       final itemName = isArabic
           ? colorNameMapArabic[matchedItem['color']]!
           : colorNameMapEnglish[matchedItem['color']]!;
-      speak(isArabic ? 'أحسنت $itemName' : 'Perfect $itemName');
-      vibrate();
+      await vibrate();
+      await speak(itemName);
+      await playClapSound();
       _controller.forward().then((_) => _controller.reverse());
     } else {
-      speak(isArabic ? 'خطأ' : 'Wrong');
-      vibrate(duration: 250);
+      await vibrate(duration: 250);
+      await speak(isArabic ? 'خطأ' : 'Wrong');
+      await playWrongSound();
     }
   }
 
@@ -127,11 +209,7 @@ class _JoinColorsScreenState extends State<JoinColorsScreen>
         backgroundColor: Colors.blue[900],
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            size: 30,
-            color: Colors.white,
-          ),
+          icon: Icon(Icons.arrow_back, size: 30, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
@@ -159,7 +237,7 @@ class _JoinColorsScreenState extends State<JoinColorsScreen>
                   children: [
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: _items.map((item) {
+                      children: _currentItems.map((item) {
                         return Draggable<int>(
                           data: item['id'],
                           feedback: _buildShape(item, scale: 1.2),
@@ -171,10 +249,7 @@ class _JoinColorsScreenState extends State<JoinColorsScreen>
                             final colorName = isArabic
                                 ? colorNameMapArabic[item['color']]!
                                 : colorNameMapEnglish[item['color']]!;
-                            final shapeName = isArabic
-                                ? colorNameMapArabic[item['color']]!
-                                : colorNameMapEnglish[item['color']]!;
-                            speak('$colorName $shapeName');
+                            speak('$colorName');
                             vibrate();
                           },
                           child:
@@ -184,7 +259,7 @@ class _JoinColorsScreenState extends State<JoinColorsScreen>
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: _targets.map((target) {
+                      children: _currentTargets.map((target) {
                         return DragTarget<int>(
                           builder: (context, candidates, rejects) {
                             return AnimatedBuilder(
@@ -214,10 +289,8 @@ class _JoinColorsScreenState extends State<JoinColorsScreen>
                                     color: _items.any((item) =>
                                             item['id'] == target['id'] &&
                                             item['matched'])
-                                        ? target[
-                                            'color'] // Full opacity when matched
-                                        : target['color'].withOpacity(0.3),
-                                    // 30% opacity otherwise
+                                        ? target['color']
+                                        : target['color'].withOpacity(0.7),
                                     size: 80,
                                   ),
                                 ),
@@ -288,16 +361,7 @@ class _JoinColorsScreenState extends State<JoinColorsScreen>
           color: item['color'],
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.white, width: 5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.white.withOpacity(0.3),
-              spreadRadius: 2,
-              blurRadius: 10,
-              offset: Offset(0, 3),
-            )
-          ],
         ),
-        child: Icon(item['shape'], color: Colors.white, size: 60),
       ),
     );
   }

@@ -22,14 +22,34 @@ class _TransportationRecognitionScreenState extends State<TransportationRecognit
       'nameAr': 'طائرة'
     },
     {
+      'image': 'assets/transportation/bike.jpg',
+      'nameEn': 'Bike',
+      'nameAr': 'دراجة'
+    },
+    {
       'image': 'assets/transportation/car.jpg',
       'nameEn': 'Car',
       'nameAr': 'سيارة'
     },
     {
+      'image': 'assets/transportation/motorcycle.jpg',
+      'nameEn': 'Motorcycle',
+      'nameAr': 'دراجة نارية'
+    },
+    {
+      'image': 'assets/transportation/boat.jpg',
+      'nameEn': 'Boat',
+      'nameAr': 'قارب'
+    },
+    {
       'image': 'assets/transportation/ship.jpg',
       'nameEn': 'Ship',
-      'nameAr': 'سفينة'
+      'nameAr': 'باخرة'
+    },
+    {
+      'image': 'assets/transportation/train.jpg',
+      'nameEn': 'Train',
+      'nameAr': 'قطار'
     },
   ];
 

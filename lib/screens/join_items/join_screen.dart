@@ -58,9 +58,9 @@ class _JoinScreenState extends State<JoinScreen> with TickerProviderStateMixin {
 
   String translate(String key) => translations[selectedLanguage]![key] ?? key;
 
-  void speak(String text) async => await flutterTts.speak(text);
+  Future<void> speak(String text) async => await flutterTts.speak(text);
 
-  void vibrate() async {
+  Future<void> vibrate() async {
     if (await Vibration.hasVibrator() ?? false) {
       Vibration.vibrate(duration: 500);
     }

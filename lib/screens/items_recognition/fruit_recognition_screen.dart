@@ -17,9 +17,9 @@ class _FruitRecognitionScreenState extends State<FruitRecognitionScreen>
 
   final List<Map<String, dynamic>> items = [
     {
-      'image': 'assets/fruits/apple.jpg',
-      'nameEn': 'Apple',
-      'nameAr': 'تفاحة'
+      'image': 'assets/fruits/grape.jpg',
+      'nameEn': 'Grape',
+      'nameAr': 'عنب'
     },
     {
       'image': 'assets/fruits/banana.jpg',
@@ -30,6 +30,21 @@ class _FruitRecognitionScreenState extends State<FruitRecognitionScreen>
       'image': 'assets/fruits/orange.jpg',
       'nameEn': 'Orange',
       'nameAr': 'برتقالة'
+    },
+    {
+      'image': 'assets/fruits/pineapple.jpg',
+      'nameEn': 'Pineapple',
+      'nameAr': 'اناناس'
+    },
+    {
+      'image': 'assets/fruits/strawberry.jpg',
+      'nameEn': 'Strawberry',
+      'nameAr': 'فراولة'
+    },
+    {
+      'image': 'assets/fruits/watermelon.jpg',
+      'nameEn': 'Watermelon',
+      'nameAr': 'بطيخ'
     },
   ];
 

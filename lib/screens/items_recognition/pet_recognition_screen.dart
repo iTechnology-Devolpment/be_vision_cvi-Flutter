@@ -27,9 +27,19 @@ class _PetRecognitionScreenState extends State<PetRecognitionScreen>
       'nameAr': 'قطة'
     },
     {
-      'image': 'assets/animals/pets/parrot.jpg',
-      'nameEn': 'Parrot',
-      'nameAr': 'ببغاء'
+      'image': 'assets/animals/pets/horse.jpg',
+      'nameEn': 'Horse',
+      'nameAr': 'حصان'
+    },
+    {
+      'image': 'assets/animals/pets/donkey.jpg',
+      'nameEn': 'Donkey',
+      'nameAr': 'حمار'
+    },
+    {
+      'image': 'assets/animals/pets/sheep.jpg',
+      'nameEn': 'Sheep',
+      'nameAr': 'غنم'
     },
   ];
 

@@ -32,7 +32,7 @@ dependencies:
     sdk: flutter
   flutter_tts: ^3.2.1  # For text-to-speech
   vibration: ^1.7.3    # For haptic feedback
-  just_audio: ^0.9.34
+  audioplayers: ^5.2.1
   camera: ^0.11.1
   speech_to_text: ^7.0.0
   permission_handler: ^11.0.1
@@ -47,6 +47,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  flutter_launcher_icons: ^0.14.3
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +77,8 @@ flutter:
     - assets/kitchen_tools/
     - assets/transportation/
     - assets/vegetables/
+    - assets/sounds/clap.mp3
+    - assets/sounds/wrong.mp3
     - assets/ssd_mobilenet.tflite
     - assets/ssd_mobilenet.txt
 

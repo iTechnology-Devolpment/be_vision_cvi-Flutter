@@ -27,9 +27,39 @@ class _VegetableRecognitionScreenState extends State<VegetableRecognitionScreen>
       'nameAr': 'خيار'
     },
     {
-      'image': 'assets/vegetables/tomato.jpg',
-      'nameEn': 'Tomato',
-      'nameAr': 'طماطم'
+      'image': 'assets/vegetables/garlic.jpg',
+      'nameEn': 'Garlic',
+      'nameAr': 'ثوم'
+    },
+    {
+      'image': 'assets/vegetables/onion.jpg',
+      'nameEn': 'Onion',
+      'nameAr': 'بصل'
+    },
+    {
+      'image': 'assets/vegetables/lemon.jpg',
+      'nameEn': 'Lemon',
+      'nameAr': 'ليمون'
+    },
+    {
+      'image': 'assets/vegetables/potato.jpg',
+      'nameEn': 'Potato',
+      'nameAr': 'بطاطس'
+    },
+    {
+      'image': 'assets/vegetables/lettuce.jpg',
+      'nameEn': 'Lettuce',
+      'nameAr': 'خس'
+    },
+    {
+      'image': 'assets/vegetables/bell_pepper.jpg',
+      'nameEn': 'Bell Pepper',
+      'nameAr': 'فلفل حلو'
+    },
+    {
+      'image': 'assets/vegetables/chili_pepper.jpg',
+      'nameEn': 'Chili Pepper',
+      'nameAr': 'فلفل حار'
     },
   ];
 

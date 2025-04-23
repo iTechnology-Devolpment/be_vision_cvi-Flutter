@@ -17,9 +17,9 @@ class _PredatorRecognitionScreenState extends State<PredatorRecognitionScreen>
 
   final List<Map<String, dynamic>> items = [
     {
-      'image': 'assets/animals/predators/eagle.jpg',
-      'nameEn': 'Eagle',
-      'nameAr': 'نسر'
+      'image': 'assets/animals/predators/gorilla.jpg',
+      'nameEn': 'Gorilla',
+      'nameAr': 'الغوريلا'
     },
     {
       'image': 'assets/animals/predators/lion.jpg',
@@ -27,9 +27,9 @@ class _PredatorRecognitionScreenState extends State<PredatorRecognitionScreen>
       'nameAr': 'أسد'
     },
     {
-      'image': 'assets/animals/predators/wolf.jpg',
-      'nameEn': 'Wolf',
-      'nameAr': 'ذئب'
+      'image': 'assets/animals/predators/tiger.jpg',
+      'nameEn': 'Tiger',
+      'nameAr': 'نمر'
     },
   ];
 

@@ -12,19 +12,28 @@ class _ColorRecognitionScreenState extends State<ColorRecognitionScreen>
     with TickerProviderStateMixin {
   FlutterTts flutterTts = FlutterTts();
   List<Color> colors = [
+    Colors.black,
+    Colors.white,
     Colors.red[900]!,
-    Colors.blue[900]!,
     Colors.green[900]!,
+    Colors.yellow[700]!,
+    Colors.blue[900]!,
   ];
   List<String> colorNamesArabic = [
+    'أسود',
+    'أبيض',
     'أحمر',
-    'أزرق',
     'أخضر',
+    'أصفر',
+    'أزرق',
   ];
   List<String> colorNamesEnglish = [
-    'Red',
     'Blue',
+    'White',
+    'Red',
     'Green',
+    'Yellow',
+    'Blue',
   ];
   int currentColorIndex = 0;
   bool isArabic = true;
@@ -152,14 +161,6 @@ class _ColorRecognitionScreenState extends State<ColorRecognitionScreen>
                     color: colors[currentColorIndex],
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: Colors.white, width: 8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.white.withOpacity(0.3),
-                        spreadRadius: 5,
-                        blurRadius: 15,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
                   ),
                 ),
               ),

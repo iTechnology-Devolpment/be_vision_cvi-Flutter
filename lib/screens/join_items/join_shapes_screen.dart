@@ -14,53 +14,54 @@ class _JoinShapesScreenState extends State<JoinShapesScreen>
   bool isArabic = true;
   late AnimationController _controller;
   late Animation<double> _animation;
+  int _currentBatch = 0;
 
   final Map<Color, String> colorNameMapArabic = {
     Colors.red: 'أحمر',
     Colors.blue: 'أزرق',
     Colors.green: 'أخضر',
+    Colors.orange: 'برتقالي',
+    Colors.purple: 'بنفسجي',
   };
 
   final Map<Color, String> colorNameMapEnglish = {
     Colors.red: 'Red',
     Colors.blue: 'Blue',
     Colors.green: 'Green',
+    Colors.orange: 'Orange',
+    Colors.purple: 'Purple',
   };
 
   final Map<IconData, String> shapeNameMapArabic = {
     Icons.circle: 'دائرة',
     Icons.square: 'مربع',
     Icons.change_history: 'مثلث',
+    Icons.star: 'نجمة',
+    Icons.rectangle: 'مستطيل',
   };
 
   final Map<IconData, String> shapeNameMapEnglish = {
     Icons.circle: 'Circle',
     Icons.square: 'Square',
     Icons.change_history: 'Triangle',
+    Icons.star: 'Star',
+    Icons.rectangle: 'Rectangle',
   };
 
-  final List<Map<String, dynamic>> _items = [
+  final List<Map<String, dynamic>> _allItems = [
     {'id': 1, 'color': Colors.red, 'shape': Icons.circle, 'matched': false},
     {'id': 2, 'color': Colors.blue, 'shape': Icons.square, 'matched': false},
-    {
-      'id': 3,
-      'color': Colors.green,
-      'shape': Icons.change_history,
-      'matched': false
-    },
+    {'id': 3, 'color': Colors.green, 'shape': Icons.change_history, 'matched': false},
+    {'id': 4, 'color': Colors.orange, 'shape': Icons.star, 'matched': false},
+    {'id': 5, 'color': Colors.purple, 'shape': Icons.rectangle, 'matched': false},
   ];
 
-  final List<Map<String, dynamic>> _targets = [
-    {'id': 1, 'color': Colors.red, 'shape': Icons.circle},
-    {'id': 2, 'color': Colors.blue, 'shape': Icons.square},
-    {'id': 3, 'color': Colors.green, 'shape': Icons.change_history},
-  ];
+  late List<List<Map<String, dynamic>>> _batches;
+  late List<List<Map<String, dynamic>>> _targetBatches;
 
   @override
   void initState() {
     super.initState();
-    _items.shuffle();
-    _targets.shuffle();
     flutterTts.setLanguage("ar");
     _controller = AnimationController(
       vsync: this,
@@ -69,22 +70,44 @@ class _JoinShapesScreenState extends State<JoinShapesScreen>
     _animation = Tween(begin: 1.0, end: 1.2).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
+
+    _resetGame();
+  }
+
+  List<List<Map<String, dynamic>>> _generateBatches(List<Map<String, dynamic>> list, int batchSize) {
+    List<List<Map<String, dynamic>>> batches = [];
+    for (int i = 0; i < list.length; i += batchSize) {
+      batches.add(list.sublist(i, i + batchSize > list.length ? list.length : i + batchSize));
+    }
+    return batches;
   }
 
   void _resetGame() {
     setState(() {
       _correctMatches = 0;
-      _items.forEach((item) => item['matched'] = false);
-      _items.shuffle();
-      _targets.shuffle();
+      _currentBatch = 0;
+      _allItems.forEach((item) => item['matched'] = false);
+      _allItems.shuffle();
+      List<Map<String, dynamic>> targets = List.from(_allItems);
+      targets.shuffle();
+      _batches = _generateBatches(_allItems, 3);
+      _targetBatches = List.generate(
+        _batches.length,
+            (index) => List.from(_batches[index].map((item) => {
+          'id': item['id'],
+          'color': item['color'],
+          'shape': item['shape'],
+          'matched': false,
+        }))..shuffle(),
+      );
     });
   }
 
-  void speak(String text) async {
+  Future<void> speak(String text) async {
     await flutterTts.speak(text);
   }
 
-  void vibrate({int duration = 500}) async {
+  Future<void> vibrate({int duration = 500}) async {
     if (await Vibration.hasVibrator() ?? false) {
       Vibration.vibrate(duration: duration);
     }
@@ -99,22 +122,29 @@ class _JoinShapesScreenState extends State<JoinShapesScreen>
     vibrate();
   }
 
-  void _handleMatch(int itemId, int targetId) {
+  void _handleMatch(int itemId, int targetId) async {
     if (itemId == targetId) {
       setState(() {
         _correctMatches++;
-        _items.firstWhere((item) => item['id'] == itemId)['matched'] = true;
+        _batches[_currentBatch].firstWhere((item) => item['id'] == itemId)['matched'] = true;
       });
-      final matchedItem = _items.firstWhere((item) => item['id'] == itemId);
+      final matchedItem = _allItems.firstWhere((item) => item['id'] == itemId);
       final itemName = isArabic
           ? shapeNameMapArabic[matchedItem['shape']]!
           : shapeNameMapEnglish[matchedItem['shape']]!;
       speak(isArabic ? 'أحسنت $itemName' : 'Perfect $itemName');
       vibrate();
       _controller.forward().then((_) => _controller.reverse());
+
+      bool batchDone = _batches[_currentBatch].every((item) => item['matched']);
+      if (batchDone && _currentBatch + 1 < _batches.length) {
+        Future.delayed(Duration(seconds: 1), () {
+          setState(() => _currentBatch++);
+        });
+      }
     } else {
-      speak(isArabic ? 'خطأ' : 'Wrong');
-      vibrate(duration: 250);
+      await speak(isArabic ? 'خطأ' : 'Wrong');
+      await vibrate(duration: 250);
     }
   }
 
@@ -123,10 +153,7 @@ class _JoinShapesScreenState extends State<JoinShapesScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(isArabic ? "الأشكال" : "Shapes",
-            style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-                color: Colors.white)),
+            style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: Colors.blue[900],
         centerTitle: true,
         leading: IconButton(
@@ -158,7 +185,7 @@ class _JoinShapesScreenState extends State<JoinShapesScreen>
                   children: [
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: _items.map((item) {
+                      children: _batches[_currentBatch].map((item) {
                         return Draggable<int>(
                           data: item['id'],
                           feedback: _buildShape(item, scale: 1.2),
@@ -176,14 +203,13 @@ class _JoinShapesScreenState extends State<JoinShapesScreen>
                             speak('$colorName $shapeName');
                             vibrate();
                           },
-                          child:
-                              item['matched'] ? Container() : _buildShape(item),
+                          child: item['matched'] ? Container() : _buildShape(item),
                         );
                       }).toList(),
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: _targets.map((target) {
+                      children: _targetBatches[_currentBatch].map((target) {
                         return DragTarget<int>(
                           builder: (context, candidates, rejects) {
                             return AnimatedBuilder(
@@ -210,13 +236,9 @@ class _JoinShapesScreenState extends State<JoinShapesScreen>
                                 child: Center(
                                   child: Icon(
                                     target['shape'],
-                                    color: _items.any((item) =>
-                                            item['id'] == target['id'] &&
-                                            item['matched'])
-                                        ? target[
-                                            'color'] // Full opacity when matched
+                                    color: _allItems.any((item) => item['id'] == target['id'] && item['matched'])
+                                        ? target['color']
                                         : target['color'].withOpacity(0.3),
-                                    // 30% opacity otherwise
                                     size: 80,
                                   ),
                                 ),
@@ -234,9 +256,7 @@ class _JoinShapesScreenState extends State<JoinShapesScreen>
             Padding(
               padding: EdgeInsets.all(20),
               child: Text(
-                isArabic
-                    ? 'اسحب الشكل إلى المكان المناسب'
-                    : 'Drag the shape to the correct place',
+                isArabic ? 'اسحب الشكل إلى المكان المناسب' : 'Drag the shape to the correct place',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 28,
@@ -258,8 +278,8 @@ class _JoinShapesScreenState extends State<JoinShapesScreen>
                 children: [
                   Text(
                     isArabic
-                        ? 'التقدم: $_correctMatches/${_items.length}'
-                        : 'Progress: $_correctMatches/${_items.length}',
+                        ? 'التقدم: $_correctMatches/${_allItems.length}'
+                        : 'Progress: $_correctMatches/${_allItems.length}',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 32,
