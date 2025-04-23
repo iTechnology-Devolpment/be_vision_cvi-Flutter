@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:vibration/vibration.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class JoinKitchenToolsScreen extends StatefulWidget {
   @override
@@ -14,6 +15,7 @@ class _JoinKitchenToolsScreenState extends State<JoinKitchenToolsScreen>
   bool isArabic = true;
   late AnimationController _controller;
   late Animation<double> _animation;
+  late final AudioPlayer _audioPlayer;
   int _currentBatch = 0;
 
   final List<Map<String, dynamic>> _allItems = [
@@ -72,6 +74,7 @@ class _JoinKitchenToolsScreenState extends State<JoinKitchenToolsScreen>
   @override
   void initState() {
     super.initState();
+    _audioPlayer = AudioPlayer();
     flutterTts.setLanguage("ar");
     _controller = AnimationController(
       vsync: this,
@@ -81,6 +84,14 @@ class _JoinKitchenToolsScreenState extends State<JoinKitchenToolsScreen>
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
     _resetGame();
+  }
+
+  Future<void> playClapSound() async {
+    await _audioPlayer.play(AssetSource('sounds/clap.mp3'));
+  }
+
+  Future<void> playWrongSound() async {
+    await _audioPlayer.play(AssetSource('sounds/wrong.mp3'));
   }
 
   List<List<Map<String, dynamic>>> _generateBatches(
@@ -142,8 +153,9 @@ class _JoinKitchenToolsScreenState extends State<JoinKitchenToolsScreen>
       var item =
           _batches[_currentBatch].firstWhere((item) => item['id'] == itemId);
       final itemName = isArabic ? item['nameAr'] : item['nameEn'];
+      await vibrate();
       await speak(itemName);
-      vibrate();
+      await playClapSound();
       _controller.forward().then((_) => _controller.reverse());
 
       bool batchDone = _batches[_currentBatch].every((item) => item['matched']);
@@ -153,8 +165,9 @@ class _JoinKitchenToolsScreenState extends State<JoinKitchenToolsScreen>
         });
       }
     } else {
-      await speak(isArabic ? 'خطأ' : 'Wrong');
       await vibrate(duration: 250);
+      await speak(isArabic ? 'خطأ' : 'Wrong');
+      await playWrongSound();
     }
   }
 

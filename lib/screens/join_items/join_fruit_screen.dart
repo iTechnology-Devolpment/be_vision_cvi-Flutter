@@ -81,6 +81,14 @@ class _JoinFruitScreenState extends State<JoinFruitScreen>
     _resetGame();
   }
 
+  Future<void> playClapSound() async {
+    await _audioPlayer.play(AssetSource('sounds/clap.mp3'));
+  }
+
+  Future<void> playWrongSound() async {
+    await _audioPlayer.play(AssetSource('sounds/wrong.mp3'));
+  }
+
   List<List<Map<String, dynamic>>> _generateBatches(
       List<Map<String, dynamic>> list, int batchSize) {
     List<List<Map<String, dynamic>>> batches = [];
@@ -89,14 +97,6 @@ class _JoinFruitScreenState extends State<JoinFruitScreen>
           i, i + batchSize > list.length ? list.length : i + batchSize));
     }
     return batches;
-  }
-
-  Future<void> playClapSound() async {
-    await _audioPlayer.play(AssetSource('sounds/clap.mp3'));
-  }
-
-  Future<void> playWrongSound() async {
-    await _audioPlayer.play(AssetSource('sounds/wrong.mp3'));
   }
 
   void _resetGame() {
@@ -148,8 +148,9 @@ class _JoinFruitScreenState extends State<JoinFruitScreen>
       var item =
           _batches[_currentBatch].firstWhere((item) => item['id'] == itemId);
       final itemName = isArabic ? item['nameAr'] : item['nameEn'];
-      await speak(itemName);
       await vibrate();
+      await speak(itemName);
+      await playClapSound();
       _controller.forward().then((_) => _controller.reverse());
 
       bool batchDone = _batches[_currentBatch].every((item) => item['matched']);
@@ -159,8 +160,9 @@ class _JoinFruitScreenState extends State<JoinFruitScreen>
         });
       }
     } else {
-      await speak(isArabic ? 'خطأ' : 'Wrong');
       await vibrate(duration: 250);
+      await speak(isArabic ? 'خطأ' : 'Wrong');
+      await playWrongSound();
     }
   }
 

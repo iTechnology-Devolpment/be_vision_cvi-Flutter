@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:vibration/vibration.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class JoinShapesScreen extends StatefulWidget {
   @override
@@ -14,6 +15,7 @@ class _JoinShapesScreenState extends State<JoinShapesScreen>
   bool isArabic = true;
   late AnimationController _controller;
   late Animation<double> _animation;
+  late final AudioPlayer _audioPlayer;
   int _currentBatch = 0;
 
   final Map<Color, String> colorNameMapArabic = {
@@ -62,6 +64,7 @@ class _JoinShapesScreenState extends State<JoinShapesScreen>
   @override
   void initState() {
     super.initState();
+    _audioPlayer = AudioPlayer();
     flutterTts.setLanguage("ar");
     _controller = AnimationController(
       vsync: this,
@@ -72,6 +75,14 @@ class _JoinShapesScreenState extends State<JoinShapesScreen>
     );
 
     _resetGame();
+  }
+
+  Future<void> playClapSound() async {
+    await _audioPlayer.play(AssetSource('sounds/clap.mp3'));
+  }
+
+  Future<void> playWrongSound() async {
+    await _audioPlayer.play(AssetSource('sounds/wrong.mp3'));
   }
 
   List<List<Map<String, dynamic>>> _generateBatches(List<Map<String, dynamic>> list, int batchSize) {
@@ -143,8 +154,9 @@ class _JoinShapesScreenState extends State<JoinShapesScreen>
         });
       }
     } else {
-      await speak(isArabic ? 'خطأ' : 'Wrong');
       await vibrate(duration: 250);
+      await speak(isArabic ? 'خطأ' : 'Wrong');
+      await playWrongSound();
     }
   }
 
